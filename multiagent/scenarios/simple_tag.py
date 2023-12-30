@@ -318,11 +318,16 @@ class Scenario(BaseScenario):
             dist = [np.sqrt(np.sum(np.square(a.state.p_pos - l.state.p_pos))) for l in agents]
             min_index = dist.index(min(dist))
             land[min_index] += 1
+
         total_sum = sum(land)
         normalized_land = np.array([value / total_sum for value in land])
         differ_distribution = world.target_distribute - normalized_land
         need_transition = np.round(differ_distribution * total_sum)
-        kl_reward = -np.sum(np.abs(need_transition)) * 4  # 分布惩罚
+
+        kl_reward = -np.sum(np.abs(need_transition)) * 4  # 分布惩罚 , 下面用来调整奖励权值
+        dis_reward = dis_reward * 1
+        collide_reward = collide_reward * 1
+        bound_reward = bound_reward * 1
 
         # print("kl_reward:{}, dis_reward:{}, collide_reward:{}".format(kl_reward, dis_reward, collide_reward))
         reward = kl_reward + dis_reward + collide_reward + bound_reward

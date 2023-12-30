@@ -37,6 +37,7 @@ def get_args():
 
     # load opponent
     parser.add_argument("--opponent", type=bool, default=False, help="whether load opponent model")
+    parser.add_argument("--checkpoint", type=bool, default=False, help="whether load checkpoint model")
 
     args = parser.parse_args()
 

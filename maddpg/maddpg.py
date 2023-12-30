@@ -37,9 +37,7 @@ class MADDPG:
             os.mkdir(self.model_path)
 
         # 加载对手模型
-        opponent_path = 'opponent/model_stable_2'
-        opponent_path = opponent_path + '/' + 'agent_%d' % agent_id
-
+        opponent_path = 'model_library/opponent/model_stable_2' + '/' + 'agent_%d' % agent_id
         if args.opponent and os.path.exists(opponent_path + '/actor_params.pkl'):
             self.actor_network.load_state_dict(torch.load(opponent_path + '/actor_params.pkl'))
             # self.critic_network.load_state_dict(torch.load(opponent_path + '/critic_params.pkl'))
@@ -48,14 +46,25 @@ class MADDPG:
             # print('Agent {} successfully loaded critic_network: {}'.format(self.agent_id,
             #                                                                opponent_path + '/critic_params.pkl'))
 
-        # 加载模型
-        if os.path.exists(self.model_path + '/actor_params.pkl') and args.evaluate == True:
-            self.actor_network.load_state_dict(torch.load(self.model_path + '/actor_params.pkl'))
-            self.critic_network.load_state_dict(torch.load(self.model_path + '/critic_params.pkl'))
+        # 加载断点模型，用来课程学习
+        checkpoint_path = 'model_library/checkpoint/model_1' + '/' + 'agent_%d' % agent_id
+        if args.checkpoint and os.path.exists(checkpoint_path + 'actor_params.pkl'):
+            self.actor_network.load_state_dict(torch.load(checkpoint_path + '/actor_params.pkl'))
+            self.critic_network.load_state_dict(torch.load(checkpoint_path + '/critic_params.pkl'))
             print('Agent {} successfully loaded actor_network: {}'.format(self.agent_id,
-                                                                          self.model_path + '/actor_params.pkl'))
+                                                                          checkpoint_path + '/actor_params.pkl'))
             print('Agent {} successfully loaded critic_network: {}'.format(self.agent_id,
-                                                                           self.model_path + '/critic_params.pkl'))
+                                                                           checkpoint_path + '/critic_params.pkl'))
+
+        # 加载模型,用来评估
+        evaluate_path = 'model_library/evaluate/model_1' + '/' + 'agent_%d' % agent_id
+        if os.path.exists(evaluate_path + '/actor_params.pkl') and args.evaluate:
+            self.actor_network.load_state_dict(torch.load(evaluate_path + '/actor_params.pkl'))
+            self.critic_network.load_state_dict(torch.load(evaluate_path + '/critic_params.pkl'))
+            print('Agent {} successfully loaded actor_network: {}'.format(self.agent_id,
+                                                                          evaluate_path + '/actor_params.pkl'))
+            print('Agent {} successfully loaded critic_network: {}'.format(self.agent_id,
+                                                                           evaluate_path + '/critic_params.pkl'))
 
     # soft update
     def _soft_update_target_network(self):
